@@ -1,0 +1,29 @@
+name: autojson
+on:
+  - pull_request
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+
+    env:
+      BUNDLE_WITHOUT: "default development test"
+      MAKE: "make --jobs 4"
+
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - run: |
+          git fetch --unshallow --no-tags --prune origin +refs/heads/*:refs/remotes/origin/*
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version:  "2.7.7"
+          bundler-cache: true
+
+      - name: Rake
+        run: rake
+      - name: Commit
+        uses: EndBug/add-and-commit@v9.1.1
+        with:
+          push: true
